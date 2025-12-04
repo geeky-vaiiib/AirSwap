@@ -32,8 +32,12 @@ cd <YOUR_PROJECT_NAME>
 # Step 3: Install the necessary dependencies.
 npm i
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Step 4: Start the Next.js development server.
 npm run dev
+
+The app will be available at http://localhost:3000
+
+**Note**: For the original Vite setup, use `npm run dev:vite` instead.
 ```
 
 **Edit a file directly in GitHub**
@@ -54,11 +58,13 @@ npm run dev
 
 This project is built with:
 
-- Vite
+- Next.js (Pages Router) - migrated from Vite
 - TypeScript
 - React
 - shadcn-ui
 - Tailwind CSS
+
+**Note**: This project was migrated from Vite to Next.js on the `migrate/nextjs-pages` branch. The original Vite files are preserved in the `src/` directory as backup.
 
 ## How can I deploy this project?
 
