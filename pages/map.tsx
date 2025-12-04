@@ -33,14 +33,22 @@ interface NDVIData {
   afterImage: string;
 }
 
-// Stub API call - will be replaced with actual API call
+// Fetch NDVI data from Next.js API route
 const fetchNDVIData = async (): Promise<NDVIData> => {
-  // Simulate API delay
-  await new Promise((resolve) => setTimeout(resolve, 1500));
+  const response = await fetch("/api/ndvi-check");
+  if (!response.ok) {
+    throw new Error("Failed to fetch NDVI data");
+  }
+  const data = await response.json();
+  // Use placeholder images if demo images don't exist
   return {
-    ndviDelta: 14.2,
-    beforeImage: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=400&h=400&fit=crop",
-    afterImage: "https://images.unsplash.com/photo-1518173946687-a4c036bc8d7c?w=400&h=400&fit=crop",
+    ...data,
+    beforeImage: data.beforeImage.startsWith("http")
+      ? data.beforeImage
+      : "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=400&h=400&fit=crop",
+    afterImage: data.afterImage.startsWith("http")
+      ? data.afterImage
+      : "https://images.unsplash.com/photo-1518173946687-a4c036bc8d7c?w=400&h=400&fit=crop",
   };
 };
 
