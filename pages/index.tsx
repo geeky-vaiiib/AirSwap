@@ -1,3 +1,5 @@
+"use client";
+
 import NavBar from "../components/layout/NavBar";
 import HeroSection from "../components/landing/HeroSection";
 import HowItWorks from "../components/landing/HowItWorks";
@@ -18,6 +20,10 @@ const Index = () => {
   );
 };
 
+export const getServerSideProps = async () => {
+  return {
+    props: {}
+  };
+};
+
 export default Index;
-
-

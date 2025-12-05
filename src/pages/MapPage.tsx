@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, lazy, Suspense } from "react";
 import { motion } from "framer-motion";
 import { Leaf, ArrowLeft, Info } from "lucide-react";

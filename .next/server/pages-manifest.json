@@ -1,0 +1,14 @@
+{
+  "/_app": "pages/_app.js",
+  "/404": "pages/404.js",
+  "/dashboard/company": "pages/dashboard/company.js",
+  "/dashboard/contributor": "pages/dashboard/contributor.js",
+  "/api/ndvi-check": "pages/api/ndvi-check.js",
+  "/": "pages/index.js",
+  "/login": "pages/login.js",
+  "/dashboard/verifier": "pages/dashboard/verifier.js",
+  "/signup": "pages/signup.js",
+  "/map": "pages/map.js",
+  "/_error": "pages/_error.js",
+  "/_document": "pages/_document.js"
+}

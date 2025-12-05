@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
@@ -156,6 +158,10 @@ const ContributorDashboard = () => {
   );
 };
 
+export const getServerSideProps = async () => {
+  return {
+    props: {}
+  };
+};
+
 export default ContributorDashboard;
-
-

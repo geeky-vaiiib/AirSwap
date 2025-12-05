@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { FileCheck, CheckCircle, XCircle, Clock, User, TrendingUp, Eye } from "lucide-react";
@@ -241,6 +243,10 @@ const VerifierDashboard = () => {
   );
 };
 
+export const getServerSideProps = async () => {
+  return {
+    props: {}
+  };
+};
+
 export default VerifierDashboard;
-
-

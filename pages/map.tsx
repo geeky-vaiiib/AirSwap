@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, lazy, Suspense } from "react";
 import { motion } from "framer-motion";
 import { Leaf, ArrowLeft, Info } from "lucide-react";
@@ -198,5 +200,10 @@ const MapPage = () => {
   );
 };
 
-export default MapPage;
+export const getServerSideProps = async () => {
+  return {
+    props: {}
+  };
+};
 
+export default MapPage;

@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Briefcase, TrendingUp, ShoppingCart, Coins, ArrowRight } from "lucide-react";
@@ -190,6 +192,10 @@ const CompanyDashboard = () => {
   );
 };
 
+export const getServerSideProps = async () => {
+  return {
+    props: {}
+  };
+};
+
 export default CompanyDashboard;
-
-

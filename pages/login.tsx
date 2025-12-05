@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import { useRouter } from "next/router";
 import { motion } from "framer-motion";
@@ -145,5 +147,10 @@ const Login = () => {
   );
 };
 
-export default Login;
+export const getServerSideProps = async () => {
+  return {
+    props: {}
+  };
+};
 
+export default Login;
