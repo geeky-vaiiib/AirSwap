@@ -1,46 +1,25 @@
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Briefcase, TrendingUp, ShoppingCart, Coins, ArrowRight } from "lucide-react";
 import DashboardSidebar from "@/components/dashboard/DashboardSidebar";
 import MarketplaceCard from "@/components/dashboard/MarketplaceCard";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
-
-const marketplaceData = [
-  {
-    id: "MKT-001",
-    contributor: "Amazon Conservation",
-    ndviDelta: 14.2,
-    credits: 847,
-    date: "Dec 1, 2024",
-    price: 12.50,
-  },
-  {
-    id: "MKT-002",
-    contributor: "Green Earth Fund",
-    ndviDelta: 11.8,
-    credits: 523,
-    date: "Nov 28, 2024",
-    price: 8.75,
-  },
-  {
-    id: "MKT-003",
-    contributor: "Rainforest Alliance",
-    ndviDelta: 16.5,
-    credits: 1024,
-    date: "Nov 25, 2024",
-    price: 15.00,
-  },
-  {
-    id: "MKT-004",
-    contributor: "EcoTrust",
-    ndviDelta: 9.3,
-    credits: 412,
-    date: "Nov 22, 2024",
-    price: 6.25,
-  },
-];
+import { isDemo } from "@/lib/isDemo";
+import { demoMarketplace, type DemoMarketplaceItem } from "@/demo/demoMarketplace";
 
 const CompanyDashboard = () => {
+  const [marketplaceItems, setMarketplaceItems] = useState<DemoMarketplaceItem[]>([]);
+
+  useEffect(() => {
+    if (isDemo()) {
+      setMarketplaceItems(demoMarketplace);
+    } else {
+      // TODO: Fetch real marketplace data from API
+      // fetch('/api/marketplace').then(res => res.json()).then(setMarketplaceItems);
+      setMarketplaceItems([]);
+    }
+  }, []);
   const handleBuy = (id: string) => {
     toast({
       title: "Purchase Initiated",
@@ -146,7 +125,12 @@ const CompanyDashboard = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {marketplaceData.map((item, index) => (
+              {marketplaceItems.length === 0 ? (
+                <div className="col-span-full text-center py-12 text-muted-foreground">
+                  No marketplace listings available. {isDemo() ? "Demo mode is enabled but no demo data available." : "Check back later for new listings."}
+                </div>
+              ) : (
+                marketplaceItems.map((item, index) => (
                 <motion.div
                   key={item.id}
                   initial={{ opacity: 0, y: 20 }}
@@ -158,7 +142,8 @@ const CompanyDashboard = () => {
                     onBuy={() => handleBuy(item.id)}
                   />
                 </motion.div>
-              ))}
+              ))
+              )}
             </div>
           </motion.div>
 
@@ -206,4 +191,5 @@ const CompanyDashboard = () => {
 };
 
 export default CompanyDashboard;
+
 

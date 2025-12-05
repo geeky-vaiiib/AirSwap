@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { motion } from "framer-motion";
-import { Leaf, Menu, X, User, LogOut } from "lucide-react";
+import { Leaf, Menu, X, User, LogOut, Wallet } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -13,8 +13,16 @@ interface NavBarProps {
 
 const NavBar = ({ isAuthenticated = false, userRole = null }: NavBarProps) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isWalletConnected, setIsWalletConnected] = useState(false);
   const router = useRouter();
   const location = { pathname: router.pathname };
+
+  const handleConnectWallet = () => {
+    // Mock wallet connection
+    setIsWalletConnected(true);
+    // In a real app, this would trigger wallet connection flow
+    console.log("Connect wallet clicked");
+  };
 
   const navLinks = [
     { href: "/", label: "Home" },
@@ -69,6 +77,23 @@ const NavBar = ({ isAuthenticated = false, userRole = null }: NavBarProps) => {
             <div className="hidden md:flex items-center gap-3">
               {isAuthenticated ? (
                 <>
+                  {!isWalletConnected && (
+                    <Button
+                      variant="accent"
+                      size="sm"
+                      onClick={handleConnectWallet}
+                      aria-label="Connect Wallet"
+                    >
+                      <Wallet className="w-4 h-4 mr-2" />
+                      Connect Wallet
+                    </Button>
+                  )}
+                  {isWalletConnected && (
+                    <Button variant="ghost" size="sm" aria-label="Wallet Connected">
+                      <Wallet className="w-4 h-4 mr-2 text-teal" />
+                      Connected
+                    </Button>
+                  )}
                   <Button variant="ghost" size="sm">
                     <User className="w-4 h-4 mr-2" />
                     Profile
@@ -80,6 +105,15 @@ const NavBar = ({ isAuthenticated = false, userRole = null }: NavBarProps) => {
                 </>
               ) : (
                 <>
+                  <Button
+                    variant="accent"
+                    size="sm"
+                    onClick={handleConnectWallet}
+                    aria-label="Connect Wallet"
+                  >
+                    <Wallet className="w-4 h-4 mr-2" />
+                    Connect Wallet
+                  </Button>
                   <Link href="/login">
                     <Button variant="ghost" size="sm">
                       Log In
@@ -131,7 +165,16 @@ const NavBar = ({ isAuthenticated = false, userRole = null }: NavBarProps) => {
                     {link.label}
                   </Link>
                 ))}
-                <div className="flex gap-2 mt-2">
+                <div className="flex flex-col gap-2 mt-2">
+                  <Button
+                    variant="accent"
+                    className="w-full"
+                    onClick={handleConnectWallet}
+                    aria-label="Connect Wallet"
+                  >
+                    <Wallet className="w-4 h-4 mr-2" />
+                    Connect Wallet
+                  </Button>
                   {!isAuthenticated && (
                     <>
                       <Link href="/login" className="flex-1">
