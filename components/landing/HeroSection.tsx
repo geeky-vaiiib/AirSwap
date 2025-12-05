@@ -1,3 +1,5 @@
+"use client";
+
 import { motion } from "framer-motion";
 import { ArrowRight, Leaf, TreeDeciduous, Wind } from "lucide-react";
 import Link from "next/link";

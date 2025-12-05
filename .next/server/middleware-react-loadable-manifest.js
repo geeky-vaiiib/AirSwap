@@ -1,1 +1,1 @@
-self.__REACT_LOADABLE_MANIFEST='{"pages/map.tsx -> @/components/map/LeafletMap":{"id":6823,"files":["static/chunks/823.f25d1db94eea8e1e.js"]}}';
+self.__REACT_LOADABLE_MANIFEST="{}"

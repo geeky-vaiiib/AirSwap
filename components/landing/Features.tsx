@@ -1,5 +1,7 @@
+"use client";
+
 import { motion } from "framer-motion";
-import { Shield, Globe, BarChart3, Users, Zap, Lock } from "lucide-react";
+import { Shield, Globe, BarChart3, Users, Zap, Lock, Satellite } from "lucide-react";
 
 const features = [
   {
@@ -40,7 +42,7 @@ const features = [
   },
 ];
 
-import { Satellite } from "lucide-react";
+
 
 const Features = () => {
   return (
