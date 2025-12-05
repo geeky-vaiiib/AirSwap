@@ -1,37 +1,25 @@
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Plus, TrendingUp, Coins, MapPin, ArrowRight } from "lucide-react";
 import DashboardSidebar from "@/components/dashboard/DashboardSidebar";
 import ClaimCard from "@/components/dashboard/ClaimCard";
 import { Button } from "@/components/ui/button";
-
-const demoClaimsData = [
-  {
-    id: "CLM-001",
-    location: "Amazon Basin, Brazil",
-    date: "Dec 1, 2024",
-    ndviDelta: 14.2,
-    status: "verified" as const,
-    credits: 847,
-  },
-  {
-    id: "CLM-002",
-    location: "Congo Rainforest",
-    date: "Nov 28, 2024",
-    ndviDelta: 11.8,
-    status: "pending" as const,
-  },
-  {
-    id: "CLM-003",
-    location: "Borneo, Indonesia",
-    date: "Nov 25, 2024",
-    ndviDelta: 8.5,
-    status: "verified" as const,
-    credits: 523,
-  },
-];
+import { isDemo } from "@/lib/isDemo";
+import { demoClaims, type DemoClaim } from "@/demo/demoClaims";
 
 const ContributorDashboard = () => {
+  const [claims, setClaims] = useState<DemoClaim[]>([]);
+
+  useEffect(() => {
+    if (isDemo()) {
+      setClaims(demoClaims);
+    } else {
+      // TODO: Fetch real claims from API
+      // fetch('/api/claims').then(res => res.json()).then(setClaims);
+      setClaims([]);
+    }
+  }, []);
   return (
     <div className="flex h-screen bg-sand">
       <DashboardSidebar role="contributor" />
@@ -144,7 +132,12 @@ const ContributorDashboard = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {demoClaimsData.map((claim, index) => (
+              {claims.length === 0 ? (
+                <div className="col-span-full text-center py-12 text-muted-foreground">
+                  No claims found. {isDemo() ? "Demo mode is enabled but no demo data available." : "Submit your first claim to get started."}
+                </div>
+              ) : (
+                claims.map((claim, index) => (
                 <motion.div
                   key={claim.id}
                   initial={{ opacity: 0, y: 20 }}
@@ -153,7 +146,8 @@ const ContributorDashboard = () => {
                 >
                   <ClaimCard {...claim} />
                 </motion.div>
-              ))}
+              ))
+              )}
             </div>
           </motion.div>
         </div>

@@ -16,14 +16,31 @@ interface NDVIData {
   afterImage: string;
 }
 
-// Stub API call
+import { isDemo } from "@/lib/isDemo";
+import { ndviDemoResponse } from "@/demo/ndviDemoResponse";
+
+// Fetch NDVI data - uses demo data if demo mode is enabled, otherwise calls API
 const fetchNDVIData = async (): Promise<NDVIData> => {
-  // Simulate API delay
-  await new Promise((resolve) => setTimeout(resolve, 1500));
+  if (isDemo()) {
+    // Simulate API delay for demo
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+    return {
+      ndviDelta: ndviDemoResponse.ndviDelta,
+      beforeImage: ndviDemoResponse.beforeImage,
+      afterImage: ndviDemoResponse.afterImage,
+    };
+  }
+  
+  // Real API call
+  const response = await fetch("/api/ndvi-check");
+  if (!response.ok) {
+    throw new Error("Failed to fetch NDVI data");
+  }
+  const data = await response.json();
   return {
-    ndviDelta: 14.2,
-    beforeImage: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=400&h=400&fit=crop",
-    afterImage: "https://images.unsplash.com/photo-1518173946687-a4c036bc8d7c?w=400&h=400&fit=crop",
+    ndviDelta: data.ndviDelta,
+    beforeImage: data.beforeImage || "/demo/before.jpg",
+    afterImage: data.afterImage || "/demo/after.jpg",
   };
 };
 

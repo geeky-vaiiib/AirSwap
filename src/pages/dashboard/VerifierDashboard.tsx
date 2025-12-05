@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { FileCheck, CheckCircle, XCircle, Clock, User, TrendingUp, Eye } from "lucide-react";
 import DashboardSidebar from "@/components/dashboard/DashboardSidebar";
@@ -6,42 +6,25 @@ import VerifierModal from "@/components/dashboard/VerifierModal";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
-
-const pendingClaims = [
-  {
-    id: "CLM-101",
-    contributor: "Amazon Conservation",
-    location: "Amazon Basin, Brazil",
-    date: "Dec 2, 2024",
-    ndviDelta: 14.2,
-    beforeImage: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=400&h=300&fit=crop",
-    afterImage: "https://images.unsplash.com/photo-1518173946687-a4c036bc8d7c?w=400&h=300&fit=crop",
-  },
-  {
-    id: "CLM-102",
-    contributor: "Green Earth Fund",
-    location: "Congo Rainforest",
-    date: "Dec 1, 2024",
-    ndviDelta: 11.8,
-    beforeImage: "https://images.unsplash.com/photo-1502082553048-f009c37129b9?w=400&h=300&fit=crop",
-    afterImage: "https://images.unsplash.com/photo-1448375240586-882707db888b?w=400&h=300&fit=crop",
-  },
-  {
-    id: "CLM-103",
-    contributor: "Rainforest Alliance",
-    location: "Borneo, Indonesia",
-    date: "Nov 30, 2024",
-    ndviDelta: 9.5,
-    beforeImage: "https://images.unsplash.com/photo-1511497584788-876760111969?w=400&h=300&fit=crop",
-    afterImage: "https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?w=400&h=300&fit=crop",
-  },
-];
+import { isDemo } from "@/lib/isDemo";
+import { demoPendingClaims, type DemoPendingClaim } from "@/demo/demoPendingClaims";
 
 const VerifierDashboard = () => {
-  const [selectedClaim, setSelectedClaim] = useState<typeof pendingClaims[0] | null>(null);
+  const [pendingClaims, setPendingClaims] = useState<DemoPendingClaim[]>([]);
+  const [selectedClaim, setSelectedClaim] = useState<DemoPendingClaim | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handleView = (claim: typeof pendingClaims[0]) => {
+  useEffect(() => {
+    if (isDemo()) {
+      setPendingClaims(demoPendingClaims);
+    } else {
+      // TODO: Fetch real pending claims from API
+      // fetch('/api/claims/pending').then(res => res.json()).then(setPendingClaims);
+      setPendingClaims([]);
+    }
+  }, []);
+
+  const handleView = (claim: DemoPendingClaim) => {
     setSelectedClaim(claim);
     setIsModalOpen(true);
   };
@@ -184,7 +167,14 @@ const VerifierDashboard = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
-                  {pendingClaims.map((claim, index) => (
+                  {pendingClaims.length === 0 ? (
+                    <tr>
+                      <td colSpan={6} className="px-6 py-12 text-center text-muted-foreground">
+                        No pending claims. {isDemo() ? "Demo mode is enabled but no demo data available." : "All claims have been reviewed."}
+                      </td>
+                    </tr>
+                  ) : (
+                    pendingClaims.map((claim, index) => (
                     <motion.tr
                       key={claim.id}
                       initial={{ opacity: 0, x: -20 }}
@@ -230,7 +220,8 @@ const VerifierDashboard = () => {
                         </Button>
                       </td>
                     </motion.tr>
-                  ))}
+                  ))
+                  )}
                 </tbody>
               </table>
             </div>

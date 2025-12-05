@@ -1,16 +1,30 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight, Leaf, TreeDeciduous, Wind, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import GradientBackground from "@/components/layout/GradientBackground";
 import { toast } from "@/hooks/use-toast";
+import { isDemo } from "@/lib/isDemo";
+import { ndviDemoResponse } from "@/demo/ndviDemoResponse";
 
 interface HeroSectionProps {
   ndvi?: number;
 }
 
-const HeroSection = ({ ndvi = 14.2 }: HeroSectionProps) => {
+const HeroSection = ({ ndvi: propNdvi }: HeroSectionProps) => {
+  const [ndvi, setNdvi] = useState<number>(propNdvi || 14.2);
+
+  useEffect(() => {
+    if (isDemo()) {
+      setNdvi(ndviDemoResponse.ndviDelta);
+    } else if (propNdvi !== undefined) {
+      setNdvi(propNdvi);
+    } else {
+      // TODO: Fetch real NDVI data from API if needed
+      // fetch('/api/ndvi/latest').then(res => res.json()).then(data => setNdvi(data.ndviDelta));
+    }
+  }, [propNdvi]);
   const handleDemoCredit = () => {
     toast({
       title: "Oxygen Credit Issued! 🎉",
