@@ -1,0 +1,74 @@
+{
+  "detectionDate": "2025-12-05",
+  "detectionSummary": "Repository contains both Next.js (primary) and Vite (legacy) artifacts",
+  "nextJsArtifacts": {
+    "present": true,
+    "files": [
+      "next.config.js",
+      "next-env.d.ts",
+      ".next/",
+      "pages/_app.tsx",
+      "pages/index.tsx",
+      "pages/api/ndvi-check.ts",
+      "pages/404.tsx",
+      "pages/_error.tsx",
+      "pages/login.tsx",
+      "pages/signup.tsx",
+      "pages/map.tsx",
+      "pages/dashboard/company.tsx",
+      "pages/dashboard/contributor.tsx",
+      "pages/dashboard/verifier.tsx"
+    ],
+    "dependencies": {
+      "next": "^14.2.0",
+      "react": "^18.3.1",
+      "react-dom": "^18.3.1"
+    },
+    "scripts": {
+      "dev": "next dev",
+      "build": "next build",
+      "start": "next start"
+    }
+  },
+  "viteArtifacts": {
+    "present": true,
+    "files": [
+      "vite.config.ts",
+      "index.html",
+      "src/main.tsx",
+      "src/App.tsx",
+      "src/vite-env.d.ts",
+      "src/index.css",
+      "src/pages/",
+      "src/components/",
+      "dist/",
+      "tsconfig.app.json",
+      "tsconfig.node.json"
+    ],
+    "dependencies": {
+      "vite": "^5.4.19",
+      "@vitejs/plugin-react-swc": "^3.11.0"
+    },
+    "scripts": {
+      "dev:vite": "vite",
+      "build:vite": "vite build",
+      "preview:vite": "vite preview"
+    }
+  },
+  "stackDuplication": {
+    "components": "Duplicated in both /components and /src/components",
+    "pages": "Duplicated in both /pages and /src/pages",
+    "hooks": "Duplicated in both /hooks and /src/hooks",
+    "lib": "Duplicated in both /lib and /src/lib"
+  },
+  "recommendedActions": [
+    "Archive Vite-specific files to .backup/vite-artifacts/",
+    "Remove Vite scripts from package.json (dev:vite, build:vite, preview:vite)",
+    "Keep Vite dependencies in package.json for now (can be removed after verification)",
+    "Update next.config.js to remove ignore-loader rules for Vite files",
+    "Clean tsconfig.json exclude rules once Vite files are archived",
+    "Use /components, /pages, /hooks, /lib as canonical sources (Next.js)",
+    "Archive src/components, src/pages duplicates"
+  ],
+  "decision": "Make Next.js the canonical runtime, archive Vite artifacts to .backup/vite-artifacts/"
+}
