@@ -1,8 +1,8 @@
-import NavBar from "@/components/layout/NavBar";
-import HeroSection from "@/components/landing/HeroSection";
-import HowItWorks from "@/components/landing/HowItWorks";
-import Features from "@/components/landing/Features";
-import Footer from "@/components/landing/Footer";
+import NavBar from "../components/layout/NavBar";
+import HeroSection from "../components/landing/HeroSection";
+import HowItWorks from "../components/landing/HowItWorks";
+import Features from "../components/landing/Features";
+import Footer from "../components/landing/Footer";
 
 const Index = () => {
   return (
@@ -19,4 +19,5 @@ const Index = () => {
 };
 
 export default Index;
+
 
