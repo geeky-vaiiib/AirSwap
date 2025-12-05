@@ -1,70 +1,91 @@
-# Welcome to your Lovable project
+# AirSwap Growth - Oxygen Credits Platform
 
-## Project info
+## Project Overview
+
+AirSwap is a platform that verifies vegetation growth using satellite NDVI data and issues blockchain-backed Oxygen Credits to landowners worldwide.
 
 **URL**: https://lovable.dev/projects/43cd49c6-c090-4cdf-a7a1-c6661e1a80aa
 
-## How can I edit this code?
+## 🚀 Quick Start
 
-There are several ways of editing your application.
+### Prerequisites
 
-**Use Lovable**
+- Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/43cd49c6-c090-4cdf-a7a1-c6661e1a80aa) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
+### Local Development
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
+# Step 1: Clone the repository
 git clone <YOUR_GIT_URL>
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+# Step 2: Navigate to the project directory
+cd airswap-growth
 
-# Step 3: Install the necessary dependencies.
-npm i
+# Step 3: Install dependencies
+npm install
 
-# Step 4: Start the Next.js development server.
+# Step 4: Start the Next.js development server
 npm run dev
-
-The app will be available at http://localhost:3000
-
-**Note**: For the original Vite setup, use `npm run dev:vite` instead.
 ```
 
-**Edit a file directly in GitHub**
+The app will be available at **http://localhost:3000**
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+### Available Scripts
 
-**Use GitHub Codespaces**
+- `npm run dev` - Start Next.js development server
+- `npm run build` - Build for production
+- `npm run start` - Start production server
+- `npm run lint` - Run ESLint
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## 🛠 Tech Stack
 
-## What technologies are used for this project?
+**Next.js is the canonical runtime** for this project:
 
-This project is built with:
+- **Next.js 14.2** (Pages Router) - React framework
+- **TypeScript 5.8** - Type safety
+- **React 18.3** - UI library
+- **Tailwind CSS 3.4** - Styling
+- **shadcn/ui** - Component library
+- **React Query** - Data fetching
+- **Leaflet** - Map visualization
 
-- Next.js (Pages Router) - migrated from Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## 📁 Project Structure
 
-**Note**: This project was migrated from Vite to Next.js on the `migrate/nextjs-pages` branch. The original Vite files are preserved in the `src/` directory as backup.
+```
+airswap-growth/
+├── pages/              # Next.js pages (canonical)
+│   ├── _app.tsx       # App wrapper
+│   ├── index.tsx      # Landing page
+│   ├── login.tsx
+│   ├── signup.tsx
+│   ├── map.tsx
+│   ├── api/           # API routes
+│   └── dashboard/     # Dashboard pages
+├── components/        # React components (canonical)
+├── styles/           # Global styles
+├── public/           # Static assets
+├── src/
+│   ├── demo/         # Demo data modules
+│   ├── hooks/        # React hooks
+│   └── lib/          # Utility functions
+├── .backup/          # Archived files
+│   └── vite-artifacts/  # Legacy Vite files
+└── next.config.js    # Next.js configuration
+```
+
+## ⚠️ Stack Migration Note
+
+This project was migrated from Vite to Next.js on **2025-12-05** (branch: `chore/ensure-nextjs-stack`).
+
+**Vite artifacts have been archived** to `.backup/vite-artifacts/` including:
+- `vite.config.ts`
+- `index.html`
+- `src/main.tsx`, `src/App.tsx`
+- Duplicate `src/components/`, `src/pages/`
+
+**Next.js is now the only supported runtime.** The `npm run dev:vite` scripts have been removed.
+
+See `migration-detect.json` and `SMOKE_TEST_RESULTS.md` for migration details.
 
 ## Demo Mode
 
