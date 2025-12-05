@@ -128,7 +128,7 @@ const HeroSection = () => {
                             NDVI Index
                           </div>
                           <div className="text-2xl font-display font-bold text-forest">
-                            +14.2%
+                            Growing
                           </div>
                         </div>
                         <div className="w-12 h-12 rounded-full bg-teal/20 flex items-center justify-center">

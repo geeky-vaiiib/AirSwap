@@ -54,7 +54,6 @@ const ContributorDashboard = () => {
                 <div className="w-12 h-12 rounded-xl bg-teal/20 flex items-center justify-center">
                   <Coins className="w-6 h-6 text-teal" />
                 </div>
-                <span className="text-xs text-teal font-medium">+12.5%</span>
               </div>
               <div className="text-2xl font-display font-bold text-forest">
                 1,370

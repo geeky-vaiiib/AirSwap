@@ -133,9 +133,9 @@ const Login = () => {
                   </div>
                   <div className="glass rounded-xl p-4">
                     <div className="text-2xl font-display font-bold text-teal">
-                      +14.2%
+                      Active
                     </div>
-                    <div className="text-sm text-forest/60">NDVI Growth</div>
+                    <div className="text-sm text-forest/60">Growth Status</div>
                   </div>
                 </div>
               </div>
