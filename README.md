@@ -66,6 +66,44 @@ This project is built with:
 
 **Note**: This project was migrated from Vite to Next.js on the `migrate/nextjs-pages` branch. The original Vite files are preserved in the `src/` directory as backup.
 
+## Demo Mode
+
+This project includes a demo mode feature that allows you to use sample data for development and testing.
+
+### Enabling Demo Mode
+
+1. Copy `.env.example` to `.env.local`:
+   ```sh
+   cp .env.example .env.local
+   ```
+
+2. Set `NEXT_PUBLIC_DEMO_MODE=true` in `.env.local`:
+   ```
+   NEXT_PUBLIC_DEMO_MODE=true
+   ```
+
+3. Restart your development server.
+
+### Demo Data Location
+
+- **Demo TypeScript/JavaScript modules**: `src/demo/*`
+  - `ndviDemoResponse.ts` - NDVI analysis demo data
+  - `demoClaims.ts` - Sample claim data
+  - `demoCredits.ts` - Sample credit data
+  - `demoMarketplace.ts` - Marketplace listing data
+  - `demoPendingClaims.ts` - Pending verification claims
+
+- **Demo assets**: `public/demo/*`
+  - `before.jpg` - NDVI before image (800×600)
+  - `after.jpg` - NDVI after image (800×600)
+  - `placeholder-avatar.png` - Placeholder avatar image
+
+### Disabling Demo Mode
+
+Set `NEXT_PUBLIC_DEMO_MODE=false` in `.env.local` or remove the variable. The app will then use real API endpoints or show empty states.
+
+**Note**: When demo mode is disabled, components will attempt to fetch data from API routes. Ensure your API endpoints are properly configured.
+
 ## How can I deploy this project?
 
 Simply open [Lovable](https://lovable.dev/projects/43cd49c6-c090-4cdf-a7a1-c6661e1a80aa) and click on Share -> Publish.
