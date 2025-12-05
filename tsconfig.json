@@ -28,5 +28,5 @@
     "strictNullChecks": false
   },
   "include": ["next-env.d.ts", "pages/**/*.ts", "pages/**/*.tsx", "components/**/*.ts", "components/**/*.tsx", "lib/**/*.ts", "hooks/**/*.ts", "hooks/**/*.tsx", "src/demo/**/*.ts", "src/lib/**/*.ts", ".next/types/**/*.ts"],
-  "exclude": ["node_modules", "src/main.tsx", "src/App.tsx", "src/pages", "src/components"]
+  "exclude": ["node_modules"]
 }
