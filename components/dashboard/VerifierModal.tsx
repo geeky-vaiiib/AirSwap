@@ -46,153 +46,159 @@ const VerifierModal = ({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-3xl bg-card rounded-3xl shadow-soft-lg z-50 overflow-hidden"
+            className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-4xl max-h-[90vh] bg-white dark:bg-gray-950 rounded-3xl shadow-2xl z-50 overflow-hidden flex flex-col"
           >
             {/* Header */}
-            <div className="p-6 border-b border-border flex items-center justify-between">
-              <div>
-                <h3 className="font-display font-bold text-forest text-xl">
-                  Verify Claim
-                </h3>
-                <p className="text-sm text-muted-foreground">
-                  Review satellite data and evidence
-                </p>
-              </div>
-              <button
-                onClick={onClose}
-                className="w-10 h-10 rounded-xl hover:bg-forest/10 flex items-center justify-center transition-colors"
-              >
-                <X className="w-5 h-5 text-forest" />
-              </button>
-            </div>
-
-            {/* Content */}
-            <div className="p-8 space-y-6 max-h-[65vh] overflow-y-auto">
-              {/* Claim Info */}
-              <div className="grid grid-cols-2 gap-5">
-                {/* Submitted Card */}
-                <div className="flex items-start gap-4 p-5 rounded-2xl bg-gradient-to-br from-gray-50 via-gray-50 to-gray-100 dark:from-gray-800 dark:via-gray-800 dark:to-gray-900 border border-gray-200 dark:border-gray-700 shadow-sm">
-                  <div className="w-12 h-12 rounded-xl bg-forest/10 flex items-center justify-center flex-shrink-0">
-                    <Calendar className="w-6 h-6 text-forest" />
-                  </div>
-                  <div className="flex-1 pt-0.5">
-                    <p className="text-[10px] text-gray-500 dark:text-gray-400 font-semibold uppercase tracking-wider mb-1.5">Submitted</p>
-                    <p className="text-base font-bold text-gray-900 dark:text-gray-100">{claim.date}</p>
-                  </div>
+            <div className="flex-shrink-0 px-8 py-6 border-b border-gray-200 dark:border-gray-800 bg-gradient-to-r from-gray-50 to-white dark:from-gray-900 dark:to-gray-950">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="font-display font-bold text-gray-900 dark:text-white text-2xl mb-1">
+                    Verify Claim
+                  </h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    Review satellite data and evidence
+                  </p>
                 </div>
-
-                {/* NDVI Change Card */}
-                <div className="flex items-start gap-4 p-5 rounded-2xl bg-gradient-to-br from-teal-50 via-emerald-50 to-teal-100 dark:from-teal-950 dark:via-emerald-950 dark:to-teal-900 border border-teal-200 dark:border-teal-800 shadow-sm">
-                  <div className="w-12 h-12 rounded-xl bg-teal-500/20 flex items-center justify-center flex-shrink-0">
-                    <TrendingUp className="w-6 h-6 text-teal-600 dark:text-teal-400" />
-                  </div>
-                  <div className="flex-1 pt-0.5">
-                    <p className="text-[10px] text-teal-700 dark:text-teal-300 font-semibold uppercase tracking-wider mb-1.5">NDVI Change</p>
-                    <p className="text-2xl font-bold text-teal-600 dark:text-teal-400">+{claim.ndviDelta}%</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Evidence - Moved above Satellite Imagery */}
-              <div className="space-y-4">
-                <h4 className="font-bold text-gray-900 dark:text-gray-100 text-base flex items-center gap-2">
-                  <MapPin className="w-5 h-5" />
-                  Evidence Photos
-                </h4>
-                <div className="p-10 rounded-2xl border-2 border-dashed border-gray-300 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900/50 text-center">
-                  <div className="flex flex-col items-center gap-3">
-                    <div className="w-16 h-16 rounded-full bg-gray-200 dark:bg-gray-800 flex items-center justify-center">
-                      <AlertCircle className="w-8 h-8 text-gray-400 dark:text-gray-500" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-semibold text-gray-600 dark:text-gray-400 mb-1">No additional evidence uploaded</p>
-                      <p className="text-xs text-gray-500 dark:text-gray-500">Satellite imagery is the primary evidence for this claim</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Satellite Images */}
-              <div className="space-y-4">
-                <h4 className="font-bold text-gray-900 dark:text-gray-100 text-base">Satellite Imagery</h4>
-                <div className="grid grid-cols-2 gap-5">
-                  {/* Before Image */}
-                  <div className="relative group">
-                    <div className="h-52 rounded-2xl bg-gradient-to-br from-amber-50 via-orange-50 to-amber-100 dark:from-amber-950 dark:via-orange-950 dark:to-amber-900 overflow-hidden relative border-2 border-amber-200/50 dark:border-amber-800/50 shadow-md transition-all group-hover:shadow-lg">
-                      {claim.beforeImage ? (
-                        <img
-                          src={claim.beforeImage}
-                          alt="Before"
-                          className="w-full h-full object-cover"
-                          onError={(e) => {
-                            const target = e.target as HTMLImageElement;
-                            target.style.display = 'none';
-                            if (target.nextElementSibling) {
-                              (target.nextElementSibling as HTMLElement).style.display = 'flex';
-                            }
-                          }}
-                        />
-                      ) : null}
-                      <div 
-                        className="absolute inset-0 flex flex-col items-center justify-center"
-                        style={{ display: claim.beforeImage ? 'none' : 'flex' }}
-                      >
-                        <div className="w-20 h-20 rounded-full bg-white dark:bg-amber-900/50 flex items-center justify-center mb-4 shadow-lg">
-                          <MapPin className="w-10 h-10 text-amber-600 dark:text-amber-400" />
-                        </div>
-                        <p className="text-sm text-amber-800 dark:text-amber-300 font-bold">Before Image</p>
-                        <p className="text-xs text-amber-700/80 dark:text-amber-400/80 mt-1">Satellite data pending</p>
-                      </div>
-                      <div className="absolute top-3 left-3 px-3 py-1.5 rounded-full bg-gray-900/90 backdrop-blur-sm text-white text-xs font-bold shadow-lg">
-                        Before
-                      </div>
-                    </div>
-                  </div>
-                  
-                  {/* After Image */}
-                  <div className="relative group">
-                    <div className="h-52 rounded-2xl bg-gradient-to-br from-teal-50 via-emerald-50 to-teal-100 dark:from-teal-950 dark:via-emerald-950 dark:to-teal-900 overflow-hidden relative border-2 border-teal-200/50 dark:border-teal-800/50 shadow-md transition-all group-hover:shadow-lg">
-                      {claim.afterImage ? (
-                        <img
-                          src={claim.afterImage}
-                          alt="After"
-                          className="w-full h-full object-cover"
-                          onError={(e) => {
-                            const target = e.target as HTMLImageElement;
-                            target.style.display = 'none';
-                            if (target.nextElementSibling) {
-                              (target.nextElementSibling as HTMLElement).style.display = 'flex';
-                            }
-                          }}
-                        />
-                      ) : null}
-                      <div 
-                        className="absolute inset-0 flex flex-col items-center justify-center"
-                        style={{ display: claim.afterImage ? 'none' : 'flex' }}
-                      >
-                        <div className="w-20 h-20 rounded-full bg-white dark:bg-teal-900/50 flex items-center justify-center mb-4 shadow-lg">
-                          <TrendingUp className="w-10 h-10 text-teal-600 dark:text-teal-400" />
-                        </div>
-                        <p className="text-sm text-teal-800 dark:text-teal-300 font-bold">After Image</p>
-                        <p className="text-xs text-teal-700/80 dark:text-teal-400/80 mt-1">Satellite data pending</p>
-                      </div>
-                      <div className="absolute top-3 left-3 px-3 py-1.5 rounded-full bg-teal-600/95 backdrop-blur-sm text-white text-xs font-bold shadow-lg">
-                        After
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <button
+                  onClick={onClose}
+                  className="w-11 h-11 rounded-xl bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 flex items-center justify-center transition-colors"
+                >
+                  <X className="w-5 h-5 text-gray-700 dark:text-gray-300" />
+                </button>
               </div>
             </div>
 
-            {/* Footer */}
-            <div className="px-8 py-6 border-t border-gray-200 dark:border-gray-700 bg-gradient-to-br from-gray-50/50 to-gray-100/50 dark:from-gray-900/50 dark:to-gray-800/50">
-              <div className="flex gap-4">
+            {/* Content - Scrollable */}
+            <div className="flex-1 overflow-y-auto px-8 py-6">
+              <div className="space-y-6">
+                {/* Claim Info Cards */}
+                <div className="grid grid-cols-2 gap-4">
+                  {/* Submitted Card */}
+                  <div className="flex items-center gap-4 p-5 rounded-2xl bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 border border-gray-200 dark:border-gray-700">
+                    <div className="w-14 h-14 rounded-xl bg-white dark:bg-gray-950 flex items-center justify-center flex-shrink-0 shadow-sm">
+                      <Calendar className="w-7 h-7 text-gray-700 dark:text-gray-300" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-[11px] text-gray-500 dark:text-gray-400 font-bold uppercase tracking-wide mb-1">Submitted</p>
+                      <p className="text-lg font-bold text-gray-900 dark:text-white">{claim.date}</p>
+                    </div>
+                  </div>
+
+                  {/* NDVI Change Card */}
+                  <div className="flex items-center gap-4 p-5 rounded-2xl bg-gradient-to-br from-teal-50 to-emerald-100 dark:from-teal-950 dark:to-emerald-900 border border-teal-200 dark:border-teal-800">
+                    <div className="w-14 h-14 rounded-xl bg-white dark:bg-teal-950 flex items-center justify-center flex-shrink-0 shadow-sm">
+                      <TrendingUp className="w-7 h-7 text-teal-600 dark:text-teal-400" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-[11px] text-teal-700 dark:text-teal-300 font-bold uppercase tracking-wide mb-1">NDVI Change</p>
+                      <p className="text-2xl font-bold text-teal-600 dark:text-teal-400">+{claim.ndviDelta}%</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Evidence Section */}
+                <div className="space-y-3">
+                  <h4 className="font-bold text-gray-900 dark:text-white text-lg flex items-center gap-2">
+                    <MapPin className="w-5 h-5 text-gray-700 dark:text-gray-300" />
+                    Evidence Photos
+                  </h4>
+                  <div className="p-12 rounded-2xl border-2 border-dashed border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50 text-center">
+                    <div className="flex flex-col items-center gap-3">
+                      <div className="w-16 h-16 rounded-full bg-gray-200 dark:bg-gray-800 flex items-center justify-center">
+                        <AlertCircle className="w-8 h-8 text-gray-400 dark:text-gray-500" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">No additional evidence uploaded</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">Satellite imagery is the primary evidence for this claim</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Satellite Images */}
+                <div className="space-y-3">
+                  <h4 className="font-bold text-gray-900 dark:text-white text-lg">Satellite Imagery</h4>
+                  <div className="grid grid-cols-2 gap-4">
+                    {/* Before Image */}
+                    <div className="relative group">
+                      <div className="aspect-video rounded-2xl bg-gradient-to-br from-amber-100 via-orange-50 to-amber-100 dark:from-amber-950 dark:via-orange-950 dark:to-amber-900 overflow-hidden relative border-2 border-amber-200 dark:border-amber-800 shadow-md hover:shadow-lg transition-all">
+                        {claim.beforeImage ? (
+                          <img
+                            src={claim.beforeImage}
+                            alt="Before"
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              const target = e.target as HTMLImageElement;
+                              target.style.display = 'none';
+                              const placeholder = target.parentElement?.querySelector('.image-placeholder') as HTMLElement;
+                              if (placeholder) {
+                                placeholder.style.display = 'flex';
+                              }
+                            }}
+                          />
+                        ) : null}
+                        <div
+                          className="image-placeholder absolute inset-0 flex flex-col items-center justify-center"
+                          style={{ display: claim.beforeImage ? 'none' : 'flex' }}
+                        >
+                          <div className="w-20 h-20 rounded-full bg-white dark:bg-amber-900/50 flex items-center justify-center mb-3 shadow-lg">
+                            <MapPin className="w-10 h-10 text-amber-600 dark:text-amber-400" />
+                          </div>
+                          <p className="text-sm text-amber-800 dark:text-amber-300 font-bold">Before Image</p>
+                          <p className="text-xs text-amber-700 dark:text-amber-400 mt-1">Satellite data pending</p>
+                        </div>
+                        <div className="absolute top-3 left-3 px-3 py-1.5 rounded-full bg-gray-900/90 backdrop-blur-sm text-white text-xs font-bold shadow-lg">
+                          Before
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* After Image */}
+                    <div className="relative group">
+                      <div className="aspect-video rounded-2xl bg-gradient-to-br from-teal-100 via-emerald-50 to-teal-100 dark:from-teal-950 dark:via-emerald-950 dark:to-teal-900 overflow-hidden relative border-2 border-teal-200 dark:border-teal-800 shadow-md hover:shadow-lg transition-all">
+                        {claim.afterImage ? (
+                          <img
+                            src={claim.afterImage}
+                            alt="After"
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              const target = e.target as HTMLImageElement;
+                              target.style.display = 'none';
+                              const placeholder = target.parentElement?.querySelector('.image-placeholder') as HTMLElement;
+                              if (placeholder) {
+                                placeholder.style.display = 'flex';
+                              }
+                            }}
+                          />
+                        ) : null}
+                        <div
+                          className="image-placeholder absolute inset-0 flex flex-col items-center justify-center"
+                          style={{ display: claim.afterImage ? 'none' : 'flex' }}
+                        >
+                          <div className="w-20 h-20 rounded-full bg-white dark:bg-teal-900/50 flex items-center justify-center mb-3 shadow-lg">
+                            <TrendingUp className="w-10 h-10 text-teal-600 dark:text-teal-400" />
+                          </div>
+                          <p className="text-sm text-teal-800 dark:text-teal-300 font-bold">After Image</p>
+                          <p className="text-xs text-teal-700 dark:text-teal-400 mt-1">Satellite data pending</p>
+                        </div>
+                        <div className="absolute top-3 left-3 px-3 py-1.5 rounded-full bg-teal-600/95 backdrop-blur-sm text-white text-xs font-bold shadow-lg">
+                          After
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Footer - Fixed at bottom */}
+            <div className="flex-shrink-0 px-8 py-6 border-t border-gray-200 dark:border-gray-800 bg-gradient-to-r from-gray-50 to-white dark:from-gray-900 dark:to-gray-950">
+              <div className="flex gap-3">
                 <Button 
                   onClick={onReject} 
                   variant="outline" 
                   size="lg"
-                  className="flex-1 gap-2 border-2 border-red-300 dark:border-red-800 text-red-600 dark:text-red-400 hover:bg-red-600 dark:hover:bg-red-700 hover:text-white hover:border-red-600 dark:hover:border-red-700 transition-all font-bold h-12"
+                  className="flex-1 gap-2 border-2 border-red-300 dark:border-red-800 text-red-600 dark:text-red-400 hover:bg-red-600 dark:hover:bg-red-700 hover:text-white hover:border-red-600 transition-all font-bold h-12 rounded-xl"
                 >
                   <XCircle className="w-5 h-5" />
                   Reject
@@ -201,7 +207,7 @@ const VerifierModal = ({
                   onClick={onRequestMore} 
                   variant="outline" 
                   size="lg"
-                  className="flex-1 gap-2 border-2 border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 hover:border-gray-400 dark:hover:border-gray-600 transition-all font-bold h-12"
+                  className="flex-1 gap-2 border-2 border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 hover:border-gray-400 transition-all font-bold h-12 rounded-xl"
                 >
                   <AlertCircle className="w-5 h-5" />
                   Request More
@@ -209,7 +215,7 @@ const VerifierModal = ({
                 <Button 
                   onClick={onApprove} 
                   size="lg"
-                  className="flex-1 gap-2 bg-teal-600 hover:bg-teal-700 dark:bg-teal-600 dark:hover:bg-teal-700 text-white shadow-lg hover:shadow-xl transition-all font-bold h-12"
+                  className="flex-1 gap-2 bg-teal-600 hover:bg-teal-700 text-white shadow-lg hover:shadow-xl transition-all font-bold h-12 rounded-xl"
                 >
                   <CheckCircle className="w-5 h-5" />
                   Approve
