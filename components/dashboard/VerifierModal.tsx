@@ -48,30 +48,30 @@ const VerifierModal = ({
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
             className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-4xl max-h-[90vh] bg-white dark:bg-gray-950 rounded-3xl shadow-2xl z-50 overflow-hidden flex flex-col"
           >
-            {/* Header */}
-            <div className="flex-shrink-0 px-8 py-6 border-b border-gray-200 dark:border-gray-800 bg-gradient-to-r from-gray-50 to-white dark:from-gray-900 dark:to-gray-950">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="font-display font-bold text-gray-900 dark:text-white text-2xl mb-1">
-                    Verify Claim
-                  </h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    Review satellite data and evidence
-                  </p>
+            {/* Header with Info Cards */}
+            <div className="flex-shrink-0 bg-gradient-to-r from-gray-50 to-white dark:from-gray-900 dark:to-gray-950">
+              {/* Title Section */}
+              <div className="px-8 py-6 border-b border-gray-200 dark:border-gray-800">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="font-display font-bold text-gray-900 dark:text-white text-2xl mb-1">
+                      Verify Claim
+                    </h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      Review satellite data and evidence
+                    </p>
+                  </div>
+                  <button
+                    onClick={onClose}
+                    className="w-11 h-11 rounded-xl bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 flex items-center justify-center transition-colors"
+                  >
+                    <X className="w-5 h-5 text-gray-700 dark:text-gray-300" />
+                  </button>
                 </div>
-                <button
-                  onClick={onClose}
-                  className="w-11 h-11 rounded-xl bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 flex items-center justify-center transition-colors"
-                >
-                  <X className="w-5 h-5 text-gray-700 dark:text-gray-300" />
-                </button>
               </div>
-            </div>
 
-            {/* Content - Scrollable */}
-            <div className="flex-1 overflow-y-auto px-8 py-6">
-              <div className="space-y-6">
-                {/* Claim Info Cards */}
+              {/* Claim Info Cards - Fixed at Top */}
+              <div className="px-8 py-5 border-b border-gray-200 dark:border-gray-800">
                 <div className="grid grid-cols-2 gap-4">
                   {/* Submitted Card */}
                   <div className="flex items-center gap-4 p-5 rounded-2xl bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 border border-gray-200 dark:border-gray-700">
@@ -95,8 +95,12 @@ const VerifierModal = ({
                     </div>
                   </div>
                 </div>
+              </div>
+            </div>
 
-                {/* Evidence Section */}
+            {/* Content - Scrollable (Evidence and Satellite Images Only) */}
+            <div className="flex-1 overflow-y-auto px-8 py-6">
+              <div className="space-y-6">{/* Evidence Section */}
                 <div className="space-y-3">
                   <h4 className="font-bold text-gray-900 dark:text-white text-lg flex items-center gap-2">
                     <MapPin className="w-5 h-5 text-gray-700 dark:text-gray-300" />
