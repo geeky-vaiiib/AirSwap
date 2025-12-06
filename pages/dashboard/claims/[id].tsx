@@ -11,7 +11,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ArrowLeft, MapPin, Calendar, FileText, Image, TrendingUp } from 'lucide-react';
+import { ArrowLeft, MapPin, FileText, Image, TrendingUp } from 'lucide-react';
 import { format } from 'date-fns';
 
 interface Claim {

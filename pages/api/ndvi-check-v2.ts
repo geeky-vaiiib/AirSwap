@@ -65,7 +65,7 @@ export default async function handler(
 
     // Validate request
     const validatedData = NDVICheckSchema.parse(req.body);
-    const { polygon, beforeImage, afterImage, claimId } = validatedData;
+    const { claimId } = validatedData;
 
     // Check if this is for an existing claim
     if (claimId) {

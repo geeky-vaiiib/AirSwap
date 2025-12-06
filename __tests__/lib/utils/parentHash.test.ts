@@ -6,7 +6,7 @@ import {
   generateParentHash,
   verifyParentHash,
   extractEvidenceCIDs,
-} from '@/lib/utils/parentHash';
+} from '../../../lib/utils/parentHash';
 
 describe('Parent Hash Generator', () => {
   const testContributorId = '507f1f77bcf86cd799439011';
