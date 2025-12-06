@@ -1,19 +1,14 @@
 /**
  * Login API Route
- * Authenticates user and returns session data
+ * Authenticates user with MongoDB and returns JWT token
  */
 
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { z } from 'zod';
-import { supabaseAdmin } from '@/lib/supabaseServer';
 import type { AuthResponse } from '@/lib/types/auth';
-import { createSessionCookie } from '@/lib/auth';
-
-// Validation schema
-const loginSchema = z.object({
-  email: z.string().email('Invalid email address'),
-  password: z.string().min(1, 'Password is required'),
-});
+import { createSessionCookie, authenticateUser, generateToken } from '@/lib/auth';
+import { LoginSchema } from '@/lib/validators/auth';
+import { isDemo } from '@/lib/isDemo';
 
 export default async function handler(
   req: NextApiRequest,
@@ -28,46 +23,70 @@ export default async function handler(
   }
 
   try {
+    // Demo mode - return mock user based on email
+    if (isDemo()) {
+      const { email } = req.body;
+      let role: 'contributor' | 'company' | 'verifier' = 'contributor';
+
+      // Determine role from email for demo purposes
+      if (email?.includes('verifier')) role = 'verifier';
+      else if (email?.includes('company')) role = 'company';
+
+      const mockUser = {
+        id: 'demo-user-' + Date.now(),
+        email: email || 'demo@airswap.io',
+        role,
+        full_name: `Demo ${role.charAt(0).toUpperCase() + role.slice(1)}`,
+      };
+
+      const token = generateToken(mockUser);
+      const sessionCookie = createSessionCookie({
+        userId: mockUser.id,
+        email: mockUser.email,
+        role: mockUser.role,
+        full_name: mockUser.full_name,
+        access_token: token,
+      });
+
+      res.setHeader('Set-Cookie', sessionCookie);
+
+      return res.status(200).json({
+        success: true,
+        user: mockUser,
+        access_token: token,
+        message: 'Demo login successful',
+      });
+    }
+
     // Validate request body
-    const validatedData = loginSchema.parse(req.body);
+    const validatedData = LoginSchema.parse(req.body);
     const { email, password } = validatedData;
 
-    // Sign in with Supabase Auth
-    const { data: authData, error: authError } = await supabaseAdmin.auth.signInWithPassword({
-      email,
-      password,
-    });
+    // Authenticate user with MongoDB
+    const user = await authenticateUser(email, password);
 
-    if (authError || !authData.user || !authData.session) {
-      console.error('Login error:', authError);
+    if (!user) {
       return res.status(401).json({
         success: false,
         error: 'Invalid email or password',
       });
     }
 
-    // Fetch user profile from profiles table
-    const { data: profile, error: profileError } = await supabaseAdmin
-      .from('profiles')
-      .select('*')
-      .eq('user_id', authData.user.id)
-      .single();
-
-    if (profileError || !profile) {
-      console.error('Profile fetch error:', profileError);
-      return res.status(500).json({
-        success: false,
-        error: 'Failed to fetch user profile',
-      });
-    }
+    // Generate JWT token
+    const token = generateToken({
+      id: user.id,
+      email: user.email,
+      role: user.role,
+      full_name: user.full_name,
+    });
 
     // Set session cookie
     const sessionCookie = createSessionCookie({
-      userId: authData.user.id,
-      email: authData.user.email!,
-      role: profile.role,
-      full_name: profile.full_name,
-      access_token: authData.session.access_token,
+      userId: user.id,
+      email: user.email,
+      role: user.role,
+      full_name: user.full_name,
+      access_token: token,
     });
 
     res.setHeader('Set-Cookie', sessionCookie);
@@ -76,17 +95,17 @@ export default async function handler(
     return res.status(200).json({
       success: true,
       user: {
-        id: authData.user.id,
-        email: authData.user.email!,
-        role: profile.role,
-        full_name: profile.full_name,
+        id: user.id,
+        email: user.email,
+        role: user.role,
+        full_name: user.full_name,
       },
-      access_token: authData.session.access_token,
+      access_token: token,
       message: 'Login successful',
     });
   } catch (error) {
     console.error('Login error:', error);
-    
+
     if (error instanceof z.ZodError) {
       return res.status(400).json({
         success: false,

@@ -1,12 +1,12 @@
 /**
  * Logout API Route
  * Clears user session and cookies
+ * JWT-based auth - simply clear the cookie (stateless)
  */
 
 import type { NextApiRequest, NextApiResponse } from 'next';
 import type { AuthResponse } from '@/lib/types/auth';
-import { createLogoutCookie, getSessionFromCookies } from '@/lib/auth';
-import { supabaseAdmin } from '@/lib/supabaseServer';
+import { createLogoutCookie } from '@/lib/auth';
 
 export default async function handler(
   req: NextApiRequest,
@@ -21,15 +21,7 @@ export default async function handler(
   }
 
   try {
-    // Get session from cookies
-    const session = getSessionFromCookies(req);
-
-    // Sign out from Supabase if we have a valid session
-    if (session?.access_token) {
-      await supabaseAdmin.auth.signOut();
-    }
-
-    // Clear session cookie
+    // Clear session cookie (JWT is stateless, so we just clear the cookie)
     res.setHeader('Set-Cookie', createLogoutCookie());
 
     return res.status(200).json({
@@ -38,10 +30,10 @@ export default async function handler(
     });
   } catch (error) {
     console.error('Logout error:', error);
-    
+
     // Even if there's an error, clear the cookie
     res.setHeader('Set-Cookie', createLogoutCookie());
-    
+
     return res.status(200).json({
       success: true,
       message: 'Logged out successfully',

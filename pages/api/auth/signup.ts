@@ -1,23 +1,15 @@
 /**
  * Signup API Route
- * Creates a new user with Supabase Auth and stores profile data
+ * Creates a new user with MongoDB and returns JWT token
  */
 
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { z } from 'zod';
-import { supabaseAdmin } from '@/lib/supabaseServer';
 import type { AuthResponse } from '@/lib/types/auth';
-import { createSessionCookie } from '@/lib/auth';
-
-// Validation schema
-const signupSchema = z.object({
-  email: z.string().email('Invalid email address'),
-  password: z.string().min(6, 'Password must be at least 6 characters'),
-  full_name: z.string().min(2, 'Full name must be at least 2 characters'),
-  role: z.enum(['contributor', 'company', 'verifier'], {
-    errorMap: () => ({ message: 'Invalid role' }),
-  }),
-});
+import { createSessionCookie, hashPassword, generateToken } from '@/lib/auth';
+import { UsersModel } from '@/lib/db/models/users';
+import { SignupSchema } from '@/lib/validators/auth';
+import { isDemo } from '@/lib/isDemo';
 
 export default async function handler(
   req: NextApiRequest,
@@ -32,77 +24,76 @@ export default async function handler(
   }
 
   try {
+    // Demo mode - return mock user
+    if (isDemo()) {
+      const { email, full_name, role } = req.body;
+      const mockUser = {
+        id: 'demo-user-' + Date.now(),
+        email: email || 'demo@airswap.io',
+        role: role || 'contributor',
+        full_name: full_name || 'Demo User',
+      };
+
+      const token = generateToken(mockUser);
+      const sessionCookie = createSessionCookie({
+        userId: mockUser.id,
+        email: mockUser.email,
+        role: mockUser.role,
+        full_name: mockUser.full_name,
+        access_token: token,
+      });
+
+      res.setHeader('Set-Cookie', sessionCookie);
+
+      return res.status(201).json({
+        success: true,
+        user: mockUser,
+        access_token: token,
+        message: 'Demo account created successfully',
+      });
+    }
+
     // Validate request body
-    const validatedData = signupSchema.parse(req.body);
+    const validatedData = SignupSchema.parse(req.body);
     const { email, password, full_name, role } = validatedData;
 
-    // Create user with Supabase Auth
-    const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
-      email,
-      password,
-      email_confirm: true, // Auto-confirm email for demo purposes
-      user_metadata: {
-        full_name,
-        role,
-      },
-    });
-
-    if (authError || !authData.user) {
-      console.error('Supabase auth error:', authError);
+    // Check if user already exists
+    const existingUser = await UsersModel.findByEmail(email);
+    if (existingUser) {
       return res.status(400).json({
         success: false,
-        error: authError?.message || 'Failed to create user',
+        error: 'Email already registered',
       });
     }
 
-    // Create profile in profiles table
-    const { error: profileError } = await supabaseAdmin
-      .from('profiles')
-      .insert({
-        user_id: authData.user.id,
-        email,
-        full_name,
-        role,
-      });
+    // Hash password
+    const password_hash = await hashPassword(password);
 
-    if (profileError) {
-      console.error('Profile creation error:', profileError);
-      // Attempt to delete the auth user if profile creation fails
-      await supabaseAdmin.auth.admin.deleteUser(authData.user.id);
-      
-      return res.status(500).json({
-        success: false,
-        error: 'Failed to create user profile',
-      });
-    }
-
-    // Generate session token
-    const { data: sessionData, error: sessionError } = await supabaseAdmin.auth.admin.generateLink({
-      type: 'magiclink',
+    // Create user in MongoDB
+    const newUser = await UsersModel.create({
       email,
+      password_hash,
+      full_name,
+      role,
     });
 
-    // Create a proper session by signing in the user
-    const { data: signInData, error: signInError } = await supabaseAdmin.auth.signInWithPassword({
-      email,
-      password,
-    });
+    // Generate JWT token
+    const tokenPayload = {
+      id: newUser._id!.toString(),
+      email: newUser.email,
+      role: newUser.role,
+      full_name: newUser.full_name || '',
+    };
 
-    if (signInError || !signInData.session) {
-      console.error('Sign in error:', signInError);
-      return res.status(500).json({
-        success: false,
-        error: 'User created but failed to generate session',
-      });
-    }
+    const token = generateToken(tokenPayload);
 
     // Set session cookie
     const sessionCookie = createSessionCookie({
-      userId: authData.user.id,
-      email,
-      role,
-      full_name,
-      access_token: signInData.session.access_token,
+      userId: newUser._id!.toString(),
+      email: newUser.email,
+      role: newUser.role,
+      full_name: newUser.full_name || '',
+      access_token: token,
     });
 
     res.setHeader('Set-Cookie', sessionCookie);
@@ -111,17 +102,17 @@ export default async function handler(
     return res.status(201).json({
       success: true,
       user: {
-        id: authData.user.id,
-        email,
-        role,
-        full_name,
+        id: newUser._id!.toString(),
+        email: newUser.email,
+        role: newUser.role,
+        full_name: newUser.full_name || '',
       },
-      access_token: signInData.session.access_token,
+      access_token: token,
       message: 'Account created successfully',
     });
   } catch (error) {
     console.error('Signup error:', error);
-    
+
     if (error instanceof z.ZodError) {
       return res.status(400).json({
         success: false,
