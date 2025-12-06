@@ -7,6 +7,7 @@
  * @requires @google/earthengine
  */
 
+// @ts-ignore - No type definitions available for @google/earthengine
 import ee from '@google/earthengine';
 import fs from 'fs';
 import path from 'path';
