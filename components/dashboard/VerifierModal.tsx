@@ -69,34 +69,34 @@ const VerifierModal = ({
             {/* Content */}
             <div className="p-6 space-y-6 max-h-[60vh] overflow-y-auto">
               {/* Claim Info */}
-              <div className="grid grid-cols-2 gap-3">
-                <div className="flex items-center gap-3 p-3 rounded-xl bg-muted border border-border">
-                  <div className="w-10 h-10 rounded-lg bg-forest/10 flex items-center justify-center flex-shrink-0">
-                    <Calendar className="w-5 h-5 text-forest" />
+              <div className="grid grid-cols-2 gap-4">
+                <div className="flex items-center gap-3 p-4 rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 border border-gray-200 dark:border-gray-700">
+                  <div className="w-12 h-12 rounded-xl bg-forest/10 flex items-center justify-center flex-shrink-0">
+                    <Calendar className="w-6 h-6 text-forest" />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <div className="text-xs text-muted-foreground">Submitted</div>
-                    <div className="font-medium text-forest truncate">{claim.date}</div>
+                    <div className="text-xs text-muted-foreground font-medium uppercase tracking-wide mb-1">Submitted</div>
+                    <div className="font-bold text-forest text-base truncate">{claim.date}</div>
                   </div>
                 </div>
-                <div className="flex items-center gap-3 p-3 rounded-xl bg-teal/10 border border-teal/20">
-                  <div className="w-10 h-10 rounded-lg bg-teal/20 flex items-center justify-center flex-shrink-0">
-                    <TrendingUp className="w-5 h-5 text-teal" />
+                <div className="flex items-center gap-3 p-4 rounded-xl bg-gradient-to-br from-teal-50 to-emerald-50 dark:from-teal-950 dark:to-emerald-950 border border-teal-200 dark:border-teal-800">
+                  <div className="w-12 h-12 rounded-xl bg-teal/20 flex items-center justify-center flex-shrink-0">
+                    <TrendingUp className="w-6 h-6 text-teal" />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <div className="text-xs text-teal-700 dark:text-teal-300">NDVI Change</div>
-                    <div className="font-bold text-teal text-lg">+{claim.ndviDelta}%</div>
+                    <div className="text-xs text-teal-700 dark:text-teal-300 font-medium uppercase tracking-wide mb-1">NDVI Change</div>
+                    <div className="font-bold text-teal text-xl">+{claim.ndviDelta}%</div>
                   </div>
                 </div>
               </div>
 
               {/* Satellite Images */}
               <div className="space-y-3">
-                <h4 className="font-medium text-forest">Satellite Imagery</h4>
+                <h4 className="font-semibold text-forest text-base">Satellite Imagery</h4>
                 <div className="grid grid-cols-2 gap-4">
                   {/* Before Image */}
                   <div className="space-y-2">
-                    <div className="aspect-video rounded-xl bg-muted overflow-hidden relative border border-border">
+                    <div className="h-48 rounded-xl bg-muted overflow-hidden relative border border-border shadow-sm">
                       {claim.beforeImage ? (
                         <img
                           src={claim.beforeImage}
@@ -112,16 +112,16 @@ const VerifierModal = ({
                         />
                       ) : null}
                       <div 
-                        className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950 dark:to-orange-950"
+                        className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-amber-100 via-orange-50 to-amber-50 dark:from-amber-900 dark:via-orange-950 dark:to-amber-950"
                         style={{ display: claim.beforeImage ? 'none' : 'flex' }}
                       >
-                        <div className="w-16 h-16 rounded-full bg-amber-100 dark:bg-amber-900 flex items-center justify-center mb-2">
-                          <MapPin className="w-8 h-8 text-amber-600 dark:text-amber-400" />
+                        <div className="w-20 h-20 rounded-full bg-white/80 dark:bg-amber-800/50 flex items-center justify-center mb-3 shadow-lg">
+                          <MapPin className="w-10 h-10 text-amber-600 dark:text-amber-300" />
                         </div>
-                        <p className="text-sm text-amber-600 dark:text-amber-400 font-medium">Before Image</p>
-                        <p className="text-xs text-muted-foreground">Satellite data pending</p>
+                        <p className="text-sm text-amber-700 dark:text-amber-300 font-semibold">Before Image</p>
+                        <p className="text-xs text-amber-600/70 dark:text-amber-400/70 mt-1">Satellite data pending</p>
                       </div>
-                      <div className="absolute bottom-2 left-2 px-3 py-1 rounded-lg bg-gray-900/70 backdrop-blur-sm text-white text-xs font-medium">
+                      <div className="absolute top-3 left-3 px-3 py-1.5 rounded-lg bg-gray-900/80 backdrop-blur-sm text-white text-xs font-semibold shadow-md">
                         Before
                       </div>
                     </div>
@@ -129,7 +129,7 @@ const VerifierModal = ({
                   
                   {/* After Image */}
                   <div className="space-y-2">
-                    <div className="aspect-video rounded-xl bg-muted overflow-hidden relative border border-border">
+                    <div className="h-48 rounded-xl bg-muted overflow-hidden relative border border-border shadow-sm">
                       {claim.afterImage ? (
                         <img
                           src={claim.afterImage}
@@ -145,16 +145,16 @@ const VerifierModal = ({
                         />
                       ) : null}
                       <div 
-                        className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-teal-50 to-emerald-50 dark:from-teal-950 dark:to-emerald-950"
+                        className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-teal-100 via-emerald-50 to-teal-50 dark:from-teal-900 dark:via-emerald-950 dark:to-teal-950"
                         style={{ display: claim.afterImage ? 'none' : 'flex' }}
                       >
-                        <div className="w-16 h-16 rounded-full bg-teal-100 dark:bg-teal-900 flex items-center justify-center mb-2">
-                          <TrendingUp className="w-8 h-8 text-teal-600 dark:text-teal-400" />
+                        <div className="w-20 h-20 rounded-full bg-white/80 dark:bg-teal-800/50 flex items-center justify-center mb-3 shadow-lg">
+                          <TrendingUp className="w-10 h-10 text-teal-600 dark:text-teal-300" />
                         </div>
-                        <p className="text-sm text-teal-600 dark:text-teal-400 font-medium">After Image</p>
-                        <p className="text-xs text-muted-foreground">Satellite data pending</p>
+                        <p className="text-sm text-teal-700 dark:text-teal-300 font-semibold">After Image</p>
+                        <p className="text-xs text-teal-600/70 dark:text-teal-400/70 mt-1">Satellite data pending</p>
                       </div>
-                      <div className="absolute bottom-2 left-2 px-3 py-1 rounded-lg bg-teal-600/80 backdrop-blur-sm text-white text-xs font-medium">
+                      <div className="absolute top-3 left-3 px-3 py-1.5 rounded-lg bg-teal-600/90 backdrop-blur-sm text-white text-xs font-semibold shadow-md">
                         After
                       </div>
                     </div>
@@ -164,29 +164,31 @@ const VerifierModal = ({
 
               {/* Evidence */}
               <div className="space-y-3">
-                <h4 className="font-medium text-forest flex items-center gap-2">
+                <h4 className="font-semibold text-forest text-base flex items-center gap-2">
                   <MapPin className="w-4 h-4" />
                   Evidence Photos
                 </h4>
-                <div className="p-6 rounded-xl border-2 border-dashed border-border bg-muted/30 text-center">
-                  <div className="flex flex-col items-center gap-2">
-                    <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center">
-                      <AlertCircle className="w-6 h-6 text-muted-foreground" />
+                <div className="p-8 rounded-xl border-2 border-dashed border-border bg-muted/50 text-center">
+                  <div className="flex flex-col items-center gap-3">
+                    <div className="w-14 h-14 rounded-full bg-muted-foreground/10 flex items-center justify-center">
+                      <AlertCircle className="w-7 h-7 text-muted-foreground" />
                     </div>
-                    <p className="text-sm text-muted-foreground">No additional evidence uploaded</p>
-                    <p className="text-xs text-muted-foreground">Satellite imagery is the primary evidence</p>
+                    <div>
+                      <p className="text-sm font-medium text-muted-foreground mb-1">No additional evidence uploaded</p>
+                      <p className="text-xs text-muted-foreground/70">Satellite imagery is the primary evidence for this claim</p>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Footer */}
-            <div className="p-6 border-t border-border bg-muted/30">
+            <div className="p-6 border-t border-border bg-gradient-to-br from-muted/30 to-muted/50">
               <div className="flex gap-3">
                 <Button 
                   onClick={onReject} 
                   variant="outline" 
-                  className="flex-1 gap-2 border-destructive text-destructive hover:bg-destructive hover:text-white"
+                  className="flex-1 gap-2 border-2 border-destructive/50 text-destructive hover:bg-destructive hover:text-white hover:border-destructive transition-all font-semibold"
                 >
                   <XCircle className="w-4 h-4" />
                   Reject
@@ -194,14 +196,14 @@ const VerifierModal = ({
                 <Button 
                   onClick={onRequestMore} 
                   variant="outline" 
-                  className="flex-1 gap-2"
+                  className="flex-1 gap-2 border-2 hover:bg-muted hover:border-forest/30 transition-all font-semibold"
                 >
                   <AlertCircle className="w-4 h-4" />
                   Request More
                 </Button>
                 <Button 
                   onClick={onApprove} 
-                  className="flex-1 gap-2 bg-teal hover:bg-teal/90 text-white"
+                  className="flex-1 gap-2 bg-teal hover:bg-teal/90 text-white shadow-md hover:shadow-lg transition-all font-semibold"
                 >
                   <CheckCircle className="w-4 h-4" />
                   Approve
