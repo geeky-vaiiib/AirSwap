@@ -1,6 +1,8 @@
 /**
  * Next.js Middleware for Route Protection
  * Handles authentication and role-based access control
+ *
+ * Uses JWT-based authentication stored in cookies
  */
 
 import { NextResponse } from 'next/server';
@@ -13,46 +15,64 @@ const protectedRoutes = {
   '/dashboard/verifier': 'verifier',
 } as const;
 
+// Protected API routes that require specific roles
+const protectedApiRoutes = {
+  '/api/claims': ['contributor', 'company', 'verifier'],
+  '/api/credits/issue': ['verifier'],
+  '/api/marketplace': ['contributor', 'company', 'verifier'],
+  '/api/evidence': ['contributor', 'verifier'],
+} as const;
+
 // Public routes that don't require authentication
 const publicRoutes = ['/', '/login', '/signup', '/map'];
+
+// API routes that are public (no auth required)
+const publicApiRoutes = ['/api/auth/login', '/api/auth/signup', '/api/auth/logout'];
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Check if demo mode is enabled
   const isDemoMode = process.env.NEXT_PUBLIC_DEMO_MODE === 'true';
-  
-  // In demo mode, allow all routes
+
+  // In demo mode, allow all routes but add demo headers
   if (isDemoMode) {
-    return NextResponse.next();
+    const response = NextResponse.next();
+    // Check for demo role/user headers
+    const demoRole = request.headers.get('x-demo-role');
+    const demoUser = request.headers.get('x-demo-user');
+    if (demoRole) {
+      response.headers.set('x-demo-role', demoRole);
+    }
+    if (demoUser) {
+      response.headers.set('x-demo-user', demoUser);
+    }
+    return response;
   }
 
   // Allow public routes
-  if (publicRoutes.includes(pathname) || pathname.startsWith('/api/')) {
+  if (publicRoutes.includes(pathname)) {
     return NextResponse.next();
   }
 
-  // Get session from cookies
-  const sessionCookie = request.cookies.get('airswap-session');
-  
-  // If no session and trying to access protected route, redirect to login
-  if (!sessionCookie && Object.keys(protectedRoutes).some(route => pathname.startsWith(route))) {
-    const loginUrl = new URL('/login', request.url);
-    loginUrl.searchParams.set('redirect', pathname);
-    return NextResponse.redirect(loginUrl);
+  // Allow public API routes
+  if (publicApiRoutes.some(route => pathname.startsWith(route))) {
+    return NextResponse.next();
   }
 
+  // Get session from cookies (JWT stored in session)
+  const sessionCookie = request.cookies.get('airswap-session');
+
   // Parse session data
-  let session;
+  let session: { userId: string; email: string; role: string; full_name: string; access_token: string } | null = null;
   try {
     session = sessionCookie ? JSON.parse(sessionCookie.value) : null;
   } catch (error) {
     console.error('Error parsing session cookie:', error);
-    const loginUrl = new URL('/login', request.url);
-    return NextResponse.redirect(loginUrl);
+    session = null;
   }
 
-  // Check role-based access for dashboard routes
+  // Handle protected dashboard routes
   for (const [route, requiredRole] of Object.entries(protectedRoutes)) {
     if (pathname.startsWith(route)) {
       if (!session) {
@@ -68,6 +88,18 @@ export function middleware(request: NextRequest) {
       }
     }
   }
+
+  // Handle any other dashboard route (catch-all)
+  if (pathname.startsWith('/dashboard')) {
+    if (!session) {
+      const loginUrl = new URL('/login', request.url);
+      loginUrl.searchParams.set('redirect', pathname);
+      return NextResponse.redirect(loginUrl);
+    }
+  }
+
+  // For API routes, we don't redirect but the API handlers will check auth
+  // This allows for proper error responses instead of redirects
 
   return NextResponse.next();
 }
