@@ -28,6 +28,8 @@ interface RealClaim {
     beforeNDVI?: number;
     afterNDVI?: number;
     delta?: number;
+    beforeImage?: string;
+    afterImage?: string;
   };
   createdAt: string;
   verifiedAt?: string;
@@ -80,8 +82,8 @@ const VerifierDashboard = () => {
               day: 'numeric',
               year: 'numeric'
             }),
-            beforeImage: '',
-            afterImage: '',
+            beforeImage: claim.ndviData?.beforeImage || '',
+            afterImage: claim.ndviData?.afterImage || '',
           }));
 
           setPendingClaims(transformedClaims);

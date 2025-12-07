@@ -15,3 +15,4 @@ export const ndviDemoResponse: NDVIDemoResponse = {
 
 export default ndviDemoResponse;
 
+

@@ -314,3 +314,4 @@ export const getServerSideProps = async () => {
 };
 
 export default Signup;
+

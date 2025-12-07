@@ -85,3 +85,4 @@ All original files backed up to `.backup/placeholders-p1/`:
 - The Connect Wallet button is a mock implementation (shows connected state on click)
 - Demo mode integration follows the existing pattern from `src/` directory
 
+

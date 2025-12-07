@@ -15,11 +15,16 @@ if (!process.env.NEXT_PUBLIC_OXYGEN_CREDITS_CONTRACT) {
   throw new Error("NEXT_PUBLIC_OXYGEN_CREDITS_CONTRACT is not set");
 }
 
+if (!process.env.WALLET_PRIVATE_KEY) {
+  throw new Error("WALLET_PRIVATE_KEY is not set (required for transaction signing)");
+}
+
 if (!process.env.THIRDWEB_SECRET_KEY) {
-  throw new Error("THIRDWEB_SECRET_KEY is not set (required for server-side operations)");
+  throw new Error("THIRDWEB_SECRET_KEY is not set (required for IPFS and API operations)");
 }
 
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_OXYGEN_CREDITS_CONTRACT;
+const WALLET_PRIVATE_KEY = process.env.WALLET_PRIVATE_KEY;
 const THIRDWEB_SECRET_KEY = process.env.THIRDWEB_SECRET_KEY;
 
 // Types
@@ -45,7 +50,7 @@ export interface MintResult {
  */
 const getServerSDK = () => {
   return ThirdwebSDK.fromPrivateKey(
-    THIRDWEB_SECRET_KEY,
+    WALLET_PRIVATE_KEY,
     PolygonAmoyTestnet,
     {
       secretKey: THIRDWEB_SECRET_KEY,

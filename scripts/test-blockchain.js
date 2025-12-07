@@ -29,12 +29,14 @@ async function testBlockchain() {
   console.log(chalk.blue('📋 Step 1: Checking Environment Variables\n'));
 
   const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_OXYGEN_CREDITS_CONTRACT;
+  const WALLET_PRIVATE_KEY = process.env.WALLET_PRIVATE_KEY;
   const THIRDWEB_SECRET = process.env.THIRDWEB_SECRET_KEY;
   const THIRDWEB_CLIENT = process.env.NEXT_PUBLIC_THIRDWEB_CLIENT_ID;
   const POLYGON_RPC = process.env.POLYGON_AMOY_RPC;
 
   const checks = [
     { name: 'NEXT_PUBLIC_OXYGEN_CREDITS_CONTRACT', value: CONTRACT_ADDRESS, required: true },
+    { name: 'WALLET_PRIVATE_KEY', value: WALLET_PRIVATE_KEY ? '***' + WALLET_PRIVATE_KEY.slice(-4) : null, required: true },
     { name: 'THIRDWEB_SECRET_KEY', value: THIRDWEB_SECRET ? '***' + THIRDWEB_SECRET.slice(-6) : null, required: true },
     { name: 'NEXT_PUBLIC_THIRDWEB_CLIENT_ID', value: THIRDWEB_CLIENT, required: true },
     { name: 'POLYGON_AMOY_RPC', value: POLYGON_RPC, required: false },
@@ -73,7 +75,7 @@ async function testBlockchain() {
     // Initialize SDK
     console.log('  Initializing Thirdweb SDK...');
     const sdk = ThirdwebSDK.fromPrivateKey(
-      THIRDWEB_SECRET,
+      WALLET_PRIVATE_KEY,
       PolygonAmoyTestnet,
       {
         secretKey: THIRDWEB_SECRET,
