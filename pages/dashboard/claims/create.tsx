@@ -28,7 +28,7 @@ import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, ArrowRight, Loader2, FileText, CheckCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import dynamic from 'next/dynamic';
-import type { UploadedFile } from '@/components/claims/FileUploader';
+import type { UploadedPhoto } from '@/components/claims/EvidencePhotoUploader';
 
 // Dynamic imports for map and file uploader components
 const PolygonDrawer = dynamic(() => import('@/components/map/PolygonDrawer'), {
@@ -36,7 +36,7 @@ const PolygonDrawer = dynamic(() => import('@/components/map/PolygonDrawer'), {
   loading: () => <div className="h-96 bg-muted rounded-lg animate-pulse" />
 });
 
-const FileUploader = dynamic(() => import('@/components/claims/FileUploader').then(mod => ({ default: mod.default })), {
+const EvidencePhotoUploader = dynamic(() => import('@/components/claims/EvidencePhotoUploader').then(mod => ({ default: mod.default })), {
   ssr: false,
   loading: () => <div className="h-48 bg-muted rounded-lg animate-pulse" />
 });
@@ -57,12 +57,18 @@ const completeFormSchema = z.object({
     coordinates: z.array(z.array(z.array(z.number().min(-180).max(180)).length(2))).min(1)
   }),
   // Step 3
-  evidence: z.array(z.object({
+  beforeEvidence: z.array(z.object({
     file: z.any(),
     name: z.string(),
-    type: z.enum(['image', 'document', 'satellite']),
+    type: z.enum(['image']),
     url: z.string().optional(),
-  })).min(1, 'At least one evidence file is required'),
+  })).min(1, 'At least one before reforestation photo is required'),
+  afterEvidence: z.array(z.object({
+    file: z.any(),
+    name: z.string(),
+    type: z.enum(['image']),
+    url: z.string().optional(),
+  })).min(1, 'At least one after reforestation photo is required'),
   // Step 4
   description: z.string().min(20, 'Description must be at least 20 characters'),
   areaHectares: z.number().min(0.01, 'Area must be greater than 0'),
@@ -90,12 +96,18 @@ const stepSchemas = {
     }),
   }),
   3: z.object({
-    evidence: z.array(z.object({
+    beforeEvidence: z.array(z.object({
       file: z.any(),
       name: z.string(),
-      type: z.enum(['image', 'document', 'satellite']),
+      type: z.enum(['image']),
       url: z.string().optional(),
-    })).min(1, 'At least one evidence file is required'),
+    })).min(1, 'At least one before reforestation photo is required'),
+    afterEvidence: z.array(z.object({
+      file: z.any(),
+      name: z.string(),
+      type: z.enum(['image']),
+      url: z.string().optional(),
+    })).min(1, 'At least one after reforestation photo is required'),
   }),
   4: z.object({
     description: z.string().min(20, 'Description must be at least 20 characters'),
@@ -125,7 +137,8 @@ type ClaimFormData = {
   };
 
   // Step 3
-  evidence: UploadedFile[];
+  beforeEvidence: UploadedPhoto[];
+  afterEvidence: UploadedPhoto[];
 
   // Step 4
   description: string;
@@ -143,7 +156,8 @@ export default function CreateClaimPage() {
     mode: 'onChange',
     defaultValues: {
       consent: false,
-      evidence: [],
+      beforeEvidence: [],
+      afterEvidence: [],
     },
     // Use complete schema for final validation on submit
     // Step-by-step validation is handled manually in nextStep()
@@ -190,7 +204,8 @@ export default function CreateClaimPage() {
           break;
         case 3:
           validationResult = stepSchemas[3].parse({
-            evidence: currentValues.evidence,
+            beforeEvidence: currentValues.beforeEvidence,
+            afterEvidence: currentValues.afterEvidence,
           });
           break;
         case 4:
@@ -211,9 +226,14 @@ export default function CreateClaimPage() {
           return;
         }
       } else if (currentStep === 3) {
-        const evidence = currentValues.evidence;
-        if (!evidence || evidence.length === 0) {
-          toast.error('Please upload at least one evidence file');
+        const beforeEvidence = currentValues.beforeEvidence;
+        const afterEvidence = currentValues.afterEvidence;
+        if (!beforeEvidence || beforeEvidence.length === 0) {
+          toast.error('Please upload at least one before reforestation photo');
+          return;
+        }
+        if (!afterEvidence || afterEvidence.length === 0) {
+          toast.error('Please upload at least one after reforestation photo');
           return;
         }
       }
@@ -237,26 +257,41 @@ export default function CreateClaimPage() {
   };
 
   const prepareClaimData = (data: ClaimFormData) => {
-    console.log({
-      contributorName: data.fullName,
-      contributorEmail: data.email,
-      phone: data.phone,
-      location: {
-        country: data.country,
-        state: data.state,
-        city: data.city,
-        description: data.locationDescription,
-        polygon: data.polygon,
-      },
-      areaHectares: data.areaHectares,
-      description: data.description,
-      expectedCredits: data.expectedCredits,
-      evidence: data.evidence?.map((item) => ({
+    // Combine before and after evidence into single array
+    const combinedEvidence = [
+      ...(data.beforeEvidence || []).map(item => ({
         name: item.name,
-        type: item.type,
-        tmpId: `temp-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        type: item.type as string,
+        tmpId: `before-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        category: 'before' as const
       })),
-    })
+      ...(data.afterEvidence || []).map(item => ({
+        name: item.name,
+        type: item.type as string,
+        tmpId: `after-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        category: 'after' as const
+      })),
+    ];
+
+    // Log claim data for debugging (remove in production)
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Claim data prepared:', {
+        contributorName: data.fullName,
+        contributorEmail: data.email,
+        phone: data.phone,
+        location: {
+          country: data.country,
+          state: data.state,
+          city: data.city,
+          description: data.locationDescription,
+          polygon: data.polygon,
+        },
+        areaHectares: data.areaHectares,
+        description: data.description,
+        expectedCredits: data.expectedCredits,
+        evidence: combinedEvidence,
+      });
+    }
     return {
       contributorName: data.fullName,
       contributorEmail: data.email,
@@ -271,11 +306,7 @@ export default function CreateClaimPage() {
       areaHectares: data.areaHectares,
       description: data.description,
       expectedCredits: data.expectedCredits,
-      evidence: data.evidence?.map((item) => ({
-        name: item.name,
-        type: item.type,
-        tmpId: `temp-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-      })),
+      evidence: combinedEvidence,
     };
   };
 
@@ -388,15 +419,17 @@ export default function CreateClaimPage() {
         return (
           <Card>
             <CardHeader>
-              <CardTitle>Evidence Documents</CardTitle>
+              <CardTitle>Reforestation Evidence Photos</CardTitle>
               <CardDescription>
-                Upload land documents, satellite images, or photographs to support your claim
+                Upload before and after photos to demonstrate your reforestation work
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <FileUploader
-                value={watchedValues.evidence}
-                onChange={(files) => setValue('evidence', files)}
+              <EvidencePhotoUploader
+                beforePhotos={watchedValues.beforeEvidence}
+                afterPhotos={watchedValues.afterEvidence}
+                onBeforePhotosChange={(photos) => setValue('beforeEvidence', photos)}
+                onAfterPhotosChange={(photos) => setValue('afterEvidence', photos)}
               />
             </CardContent>
           </Card>
@@ -537,18 +570,41 @@ export default function CreateClaimPage() {
 
                 {/* Evidence */}
                 <div>
-                  <h4 className="font-medium mb-2">Evidence Files</h4>
-                  <div className="bg-muted p-4 rounded-lg">
-                    <div className="space-y-2">
-                      {watchedValues.evidence?.map((file, index) => (
-                        <div key={index} className="flex items-center gap-2">
-                          <FileText className="h-4 w-4" />
-                          <span className="text-sm">{file.name}</span>
-                          <Badge variant="secondary" className="text-xs">
-                            {file.type}
-                          </Badge>
-                        </div>
-                      ))}
+                  <h4 className="font-medium mb-2">Evidence Photos</h4>
+                  <div className="bg-muted p-4 rounded-lg space-y-3">
+                    <div>
+                      <h5 className="text-sm font-medium mb-2">Before Reforestation ({watchedValues.beforeEvidence.length} photos)</h5>
+                      <div className="space-y-1">
+                        {watchedValues.beforeEvidence?.slice(0, 3).map((file, index) => (
+                          <div key={index} className="flex items-center gap-2">
+                            <FileText className="h-4 w-4" />
+                            <span className="text-xs">{file.name}</span>
+                            <Badge variant="secondary" className="text-xs">Before</Badge>
+                          </div>
+                        ))}
+                        {watchedValues.beforeEvidence.length > 3 && (
+                          <p className="text-xs text-muted-foreground">
+                            +{watchedValues.beforeEvidence.length - 3} more before photos
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                    <div>
+                      <h5 className="text-sm font-medium mb-2">After Reforestation ({watchedValues.afterEvidence.length} photos)</h5>
+                      <div className="space-y-1">
+                        {watchedValues.afterEvidence?.slice(0, 3).map((file, index) => (
+                          <div key={index} className="flex items-center gap-2">
+                            <FileText className="h-4 w-4" />
+                            <span className="text-xs">{file.name}</span>
+                            <Badge variant="secondary" className="text-xs">After</Badge>
+                          </div>
+                        ))}
+                        {watchedValues.afterEvidence.length > 3 && (
+                          <p className="text-xs text-muted-foreground">
+                            +{watchedValues.afterEvidence.length - 3} more after photos
+                          </p>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -591,34 +647,25 @@ export default function CreateClaimPage() {
 
   // Submit form
   const onSubmit = async (data: ClaimFormData) => {
-    console.log('=== FORM SUBMISSION DEBUG ===');
-    console.log('Raw form data received:', data);
-    console.log('Full Name:', data.fullName);
-    console.log('Email:', data.email);
-    console.log('Polygon:', data.polygon);
-    console.log('Evidence count:', data.evidence?.length);
-    console.log('Area:', data.areaHectares);
-    console.log('Consent:', data.consent);
-    
     // Validate we have all required data
     if (!data.fullName || !data.email) {
       toast.error('Missing required contributor information');
       setCurrentStep(1);
       return;
     }
-    
+
     if (!data.polygon || !data.polygon.coordinates || data.polygon.coordinates.length === 0) {
       toast.error('Missing land polygon. Please go back and draw the land boundaries.');
       setCurrentStep(2);
       return;
     }
-    
-    if (!data.evidence || data.evidence.length === 0) {
-      toast.error('Missing evidence files. Please upload at least one file.');
+
+    if (!data.beforeEvidence || data.beforeEvidence.length === 0 || !data.afterEvidence || data.afterEvidence.length === 0) {
+      toast.error('Missing evidence photos. Please upload at least one photo before and after reforestation.');
       setCurrentStep(3);
       return;
     }
-    
+
     if (!data.description || !data.areaHectares || !data.consent) {
       toast.error('Missing required claim details');
       setCurrentStep(4);
@@ -629,7 +676,6 @@ export default function CreateClaimPage() {
       setIsSubmitting(true);
 
       const claimData = prepareClaimData(data);
-      console.log('Prepared claim data:', claimData);
 
       const response = await fetch('/api/claims/index-v2', {
         method: 'POST',
@@ -639,20 +685,24 @@ export default function CreateClaimPage() {
         body: JSON.stringify(claimData),
       });
 
-      console.log('Response status:', response.status);
       const result = await response.json();
-      console.log('Response data:', result);
 
       if (result.success) {
         toast.success('Claim submitted successfully!');
         router.push(`/dashboard/claims/${result.data._id}`);
       } else {
         toast.error(result.error || 'Failed to submit claim');
-        console.error('Server error:', result.error);
+        // Log server errors only in development
+        if (process.env.NODE_ENV === 'development') {
+          console.error('Server error:', result.error);
+        }
       }
     } catch (error) {
-      console.error('Submit error:', error);
       toast.error('Network error. Please try again.');
+      // Log unexpected errors only in development
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Submit error:', error);
+      }
     } finally {
       setIsSubmitting(false);
     }

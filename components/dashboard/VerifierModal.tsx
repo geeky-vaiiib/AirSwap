@@ -13,6 +13,12 @@ interface VerifierModalProps {
     ndviDelta: number;
     beforeImage: string;
     afterImage: string;
+    evidence?: {
+      name: string;
+      type: string;
+      url: string;
+      category?: 'before' | 'after';
+    }[];
   } | null;
   onApprove: () => void;
   onReject: () => void;
@@ -100,23 +106,52 @@ const VerifierModal = ({
             {/* Content - Scrollable (Evidence and Satellite Images Only) */}
             <div className="flex-1 overflow-y-auto px-8 py-6">
               <div className="space-y-6">{/* Evidence Section */}
-                <div className="space-y-3">
-                  <h4 className="font-bold text-gray-900 dark:text-white text-lg flex items-center gap-2">
-                    <MapPin className="w-5 h-5 text-gray-700 dark:text-gray-300" />
-                    Evidence Photos
-                  </h4>
-                  <div className="p-12 rounded-2xl border-2 border-dashed border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50 text-center">
-                    <div className="flex flex-col items-center gap-3">
-                      <div className="w-16 h-16 rounded-full bg-gray-200 dark:bg-gray-800 flex items-center justify-center">
-                        <AlertCircle className="w-8 h-8 text-gray-400 dark:text-gray-500" />
-                      </div>
-                      <div>
-                        <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">No additional evidence uploaded</p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400">Satellite imagery is the primary evidence for this claim</p>
+                {(() => {
+                  const beforeEvidence = claim.evidence?.filter(ev => ev.category === 'before') || [];
+                  const afterEvidence = claim.evidence?.filter(ev => ev.category === 'after') || [];
+
+                  return beforeEvidence.length > 0 || afterEvidence.length > 0 ? (
+                    <div className="space-y-3">
+                      <h4 className="font-bold text-gray-900 dark:text-white text-lg flex items-center gap-2">
+                        <MapPin className="w-5 h-5 text-gray-700 dark:text-gray-300" />
+                        Evidence Photos
+                      </h4>
+                      <div className="grid grid-cols-2 gap-4">
+                        {/* Before Evidence Photos */}
+                        <div className="space-y-2">
+                          <h5 className="text-sm font-medium text-gray-700 dark:text-gray-300 text-center">Before Reforestation</h5>
+                          <div className="space-y-2 max-h-48 overflow-y-auto">
+                            {beforeEvidence.map((photo, index) => (
+                              <div key={index} className="relative aspect-square rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800">
+                                <img
+                                  src={photo.url}
+                                  alt={photo.name}
+                                  className="w-full h-full object-cover"
+                                />
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* After Evidence Photos */}
+                        <div className="space-y-2">
+                          <h5 className="text-sm font-medium text-gray-700 dark:text-gray-300 text-center">After Reforestation</h5>
+                          <div className="space-y-2 max-h-48 overflow-y-auto">
+                            {afterEvidence.map((photo, index) => (
+                              <div key={index} className="relative aspect-square rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800">
+                                <img
+                                  src={photo.url}
+                                  alt={photo.name}
+                                  className="w-full h-full object-cover"
+                                />
+                              </div>
+                            ))}
+                          </div>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </div>
+                  ) : null;
+                })()}
 
                 {/* Satellite Images */}
                 <div className="space-y-3">

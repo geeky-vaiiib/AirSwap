@@ -1,6 +1,6 @@
 /** @type {import('jest').Config} */
 const config = {
-  testEnvironment: 'node',
+  testEnvironment: 'jsdom',
   testMatch: [
     '**/__tests__/**/*.test.ts',
     '**/__tests__/**/*.test.tsx',
@@ -13,6 +13,9 @@ const config = {
       tsconfig: 'tsconfig.json',
     }],
   },
+  transformIgnorePatterns: [
+    'node_modules/(?!(react-leaflet|@react-leaflet|@testing-library|react-dropzone)/)',
+  ],
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
   collectCoverageFrom: [
     'lib/**/*.{ts,tsx}',
@@ -37,4 +40,3 @@ const config = {
 };
 
 module.exports = config;
-

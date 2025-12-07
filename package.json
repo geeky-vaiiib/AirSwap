@@ -10,7 +10,13 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "security-audit": "node scripts/security-audit.js",
+    "security-check": "npm run security-audit",
+    "health-check": "curl -f http://localhost:3000/api/health || echo 'Health check failed'",
+    "prod-health": "curl -f https://airswap.eco/api/health || echo 'Production health check failed'",
+    "test:project": "node scripts/test-project.cjs",
+    "test:all": "npm run test:project"
   },
   "dependencies": {
     "@google/earthengine": "^1.7.3",
@@ -59,6 +65,7 @@
     "input-otp": "^1.4.2",
     "jsonwebtoken": "^9.0.3",
     "leaflet": "^1.9.4",
+    "leaflet-control-geocoder": "^3.3.1",
     "leaflet-draw": "^1.0.4",
     "leaflet-geosearch": "^4.2.2",
     "lucide-react": "^0.462.0",

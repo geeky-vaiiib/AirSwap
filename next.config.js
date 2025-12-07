@@ -36,19 +36,23 @@ const securityHeaders = [
     value: 'camera=(), microphone=(), geolocation=(self), interest-cohort=()',
   },
   {
-    // Content Security Policy - adjust based on your needs
+    // Enhanced Content Security Policy for production security
     key: 'Content-Security-Policy',
     value: [
       "default-src 'self'",
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval'", // Required for Next.js
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.sentry.io", // Required for Next.js + Sentry
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com", // Allow Google Fonts
-      "img-src 'self' data: https: blob:",
-      "font-src 'self' data: https://fonts.gstatic.com", // Allow Google Fonts
-      "media-src 'self' data: blob:", // Allow audio/video from data URIs
-      "connect-src 'self' https://*.mongodb.net wss://*.mongodb.net",
-      "frame-ancestors 'none'",
+      "img-src 'self' data: https: blob: https://*.mapbox.com https://*.tile.openstreetmap.org", // Maps and image uploads
+      "font-src 'self' data: https://fonts.gstatic.com", // Google Fonts
+      "media-src 'self' data: blob:", // File uploads
+      "connect-src 'self' https://*.mongodb.net wss://*.mongodb.net https://*.sentry.io https://api.sentry.io",
+      "frame-ancestors 'none'", // Prevent embedding
+      "frame-src 'none'", // Prevent iframes entirely
+      "object-src 'none'", // Block plugins
       "base-uri 'self'",
       "form-action 'self'",
+      "upgrade-insecure-requests", // Force HTTPS
+      "block-all-mixed-content", // Prevent mixed HTTP/HTTPS
     ].join('; '),
   },
 ];
@@ -90,4 +94,3 @@ const nextConfig = {
 };
 
 export default nextConfig;
-
